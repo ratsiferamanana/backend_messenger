@@ -12,7 +12,8 @@ app.use(cors());
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "https://chat-frontend-2tx6.onrender.com",  // Remplace par l'URL de ton frontend
+    methods: ["GET", "POST"]
   },
 });
 
