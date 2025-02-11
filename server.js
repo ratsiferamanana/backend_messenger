@@ -11,13 +11,15 @@ const server = http.createServer(app);
 // Active CORS pour le frontend
 app.use(cors({
   origin: "*",  // Permet à tout le monde d'accéder
-  methods: ["GET", "POST"]
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
 }));
 
 const io = new Server(server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"]
   },
 });
 
