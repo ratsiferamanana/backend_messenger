@@ -9,11 +9,14 @@ const app = express();
 const server = http.createServer(app);
 
 // Active CORS pour le frontend
-app.use(cors());
+app.use(cors({
+  origin: "*",  // Permet à tout le monde d'accéder
+  methods: ["GET", "POST"]
+}));
 
 const io = new Server(server, {
   cors: {
-    origin: "https://chat-frontend-2tx6.onrender.com",
+    origin: "*",
     methods: ["GET", "POST"]
   },
 });
