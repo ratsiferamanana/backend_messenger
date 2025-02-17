@@ -8,6 +8,7 @@ const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
 
+
 // Configuration CORS (Mets l'URL de ton frontend sur Render)
 app.use(cors({
   origin: "*",
@@ -26,7 +27,7 @@ const io = new Server(server, {
 let users = {};
 
 io.on("connection", async (socket) => {
-  console.log("Un utilisateur connecté");
+  
 
   try {
     const messages = await pool.query(`SELECT "user", text FROM messages ORDER BY created_at ASC`);
@@ -41,7 +42,8 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("chat message", async (msg) => {
-    const username = users[socket.id] || "Anonyme";
+    
+    const username = users[socket.id] ;
     try {
       const result = await pool.query(
         `INSERT INTO messages ("user", text) VALUES ($1, $2) RETURNING created_at`,
@@ -68,7 +70,7 @@ io.on("connection", async (socket) => {
 });
 
 // Port dynamique (Render) ou 5000 en local
-const PORT = process.env.PORT || 5000;
+const PORT = 5000 || process.env.PORT;
 server.listen(PORT, () => {
   console.log(`Serveur en écoute sur le port ${PORT}`);
 });
