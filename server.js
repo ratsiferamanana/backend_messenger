@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const sql = require("./db");
+const pool = require("./db");
 const cors = require("cors");
 
 const app = express();
@@ -29,7 +29,7 @@ io.on("connection", async (socket) => {
   console.log("Un utilisateur connecté");
 
   try {
-    const messages = await sql`SELECT "user", text FROM messages ORDER BY created_at ASC`;
+    const messages = await pool.query(`SELECT "user", text FROM messages ORDER BY created_at ASC`);
     socket.emit("chat history", messages);
   } catch (error) {
     console.error("Erreur lors de la récupération des messages :", error);
@@ -43,10 +43,10 @@ io.on("connection", async (socket) => {
   socket.on("chat message", async (msg) => {
     const username = users[socket.id] || "Anonyme";
     try {
-      const result = await sql`
+      const result = await pool.query(`
         INSERT INTO messages ("user", text) VALUES (${username}, ${msg})
         RETURNING created_at
-      `;
+      `);
 
       const messageData = {
         user: username,
