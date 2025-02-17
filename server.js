@@ -8,19 +8,18 @@ const cors = require("cors");
 const app = express();
 const server = http.createServer(app);
 
-// Active CORS pour le frontend
+// Configuration CORS (Mets l'URL de ton frontend sur Render)
 app.use(cors({
-  origin: "*",  // Permet à tout le monde d'accéder
+  origin: "https://ton-frontend.onrender.com",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"]
 }));
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type"]
-  },
+    origin: "https://ton-frontend.onrender.com",
+    methods: ["GET", "POST"]
+  }
 });
 
 let users = {};
@@ -30,7 +29,7 @@ io.on("connection", async (socket) => {
 
   try {
     const messages = await pool.query(`SELECT "user", text FROM messages ORDER BY created_at ASC`);
-    socket.emit("chat history", messages);
+    socket.emit("chat history", messages.rows);
   } catch (error) {
     console.error("Erreur lors de la récupération des messages :", error);
   }
@@ -43,16 +42,16 @@ io.on("connection", async (socket) => {
   socket.on("chat message", async (msg) => {
     const username = users[socket.id] || "Anonyme";
     try {
-      const result = await pool.query(`
-        INSERT INTO messages ("user", text) VALUES (${username}, ${msg})
-        RETURNING created_at
-      `);
+      const result = await pool.query(
+        `INSERT INTO messages ("user", text) VALUES ($1, $2) RETURNING created_at`,
+        [username, msg]
+      );
 
       const messageData = {
         user: username,
         text: msg,
         senderId: socket.id,
-        created_at: result[0].created_at,
+        created_at: result.rows[0].created_at,
       };
 
       io.emit("chat message", messageData);
