@@ -70,7 +70,7 @@ io.on("connection", async (socket) => {
 });
 
 // Port dynamique (Render) ou 5000 en local
-const PORT = 5000 || process.env.PORT;
+const PORT = process.env.PORT || process.env.PORT;
 server.listen(PORT, () => {
   console.log(`Serveur en écoute sur le port ${PORT}`);
 });
