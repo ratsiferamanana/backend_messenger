@@ -10,14 +10,14 @@ const server = http.createServer(app);
 
 // Configuration CORS (Mets l'URL de ton frontend sur Render)
 app.use(cors({
-  origin: "https://ton-frontend.onrender.com",
+  origin: "https://chat-frontend-2tx6.onrender.com",
   methods: ["GET", "POST"],
   allowedHeaders: ["Content-Type"]
 }));
 
 const io = new Server(server, {
   cors: {
-    origin: "https://ton-frontend.onrender.com",
+    origin: "https://chat-frontend-2tx6.onrender.com",
     methods: ["GET", "POST"]
   }
 });
